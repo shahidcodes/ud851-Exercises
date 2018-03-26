@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">NotificationToDo</string>
+    <string name="save_show"><![CDATA[Save & Show]]></string>
+</resources>

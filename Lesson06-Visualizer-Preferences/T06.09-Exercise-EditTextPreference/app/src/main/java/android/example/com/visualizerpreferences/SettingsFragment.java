@@ -25,11 +25,14 @@ import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.PreferenceScreen;
+import android.util.Log;
 import android.widget.Toast;
 
 
 public class SettingsFragment extends PreferenceFragmentCompat implements
-        OnSharedPreferenceChangeListener {
+        OnSharedPreferenceChangeListener, Preference.OnPreferenceChangeListener {
+
+    private static final String TAG = "SettingsFragment";
 
     @Override
     public void onCreatePreferences(Bundle bundle, String s) {
@@ -51,6 +54,9 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
                 setPreferenceSummary(p, value);
             }
         }
+
+        Preference preference = findPreference(getString(R.string.pref_size_key));
+        preference.setOnPreferenceChangeListener(this);
     }
 
     @Override
@@ -73,15 +79,20 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
      * @param value      The value that the preference was updated to
      */
     private void setPreferenceSummary(Preference preference, String value) {
-        // TODO (3) Don't forget to add code here to properly set the summary for an EditTextPreference
+        // properly set the summary for an EditTextPreference
         if (preference instanceof ListPreference) {
             // For list preferences, figure out the label of the selected value
             ListPreference listPreference = (ListPreference) preference;
             int prefIndex = listPreference.findIndexOfValue(value);
+            Log.d(TAG, "setPreferenceSummary: index " + prefIndex);
             if (prefIndex >= 0) {
                 // Set the summary to that label
-                listPreference.setSummary(listPreference.getEntries()[prefIndex]);
+                Log.d(TAG, "setPreferenceSummary: entries" + listPreference.getEntries());
+                CharSequence entryValue = listPreference.getEntries()[prefIndex];
+                listPreference.setSummary(entryValue);
             }
+        }else if (preference instanceof EditTextPreference){
+            preference.setSummary(value);
         }
     }
     
@@ -97,5 +108,28 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
         super.onDestroy();
         getPreferenceScreen().getSharedPreferences()
                 .unregisterOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    public boolean onPreferenceChange(Preference preference, Object newValue) {
+        Toast error = Toast.makeText(getContext(), "Please select a number between 0.1 and 3", Toast.LENGTH_SHORT);
+        String prefKey = preference.getKey();
+        String sizeKey = getString(R.string.pref_size_key);
+        if (prefKey.equals(sizeKey)){
+            String newSize = (String) newValue;
+            try{
+                Float size = Float.parseFloat(newSize);
+                if (size > 3 || size <= 0){
+                    error.show();
+                    return  false;
+                }
+            }catch (NumberFormatException e){
+                error.show();
+                return false;
+            }
+
+        }
+
+        return true;
     }
 }

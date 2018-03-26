@@ -18,6 +18,7 @@ package com.example.android.implicitintents;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.ShareCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
@@ -66,10 +67,14 @@ public class MainActivity extends AppCompatActivity {
      * @param v Button that was clicked.
      */
     public void onClickShareTextButton(View v) {
-        // TODO (5) Specify a String you'd like to share
+        String shareText = "I am learning android intents";
+        shareText(shareText);
+    }
 
-        // TODO (6) Replace the Toast with shareText, passing in the String from step 5
-        Toast.makeText(this, "TODO: Share text when this is clicked", Toast.LENGTH_LONG).show();
+    private void shareText(String shareText) {
+        ShareCompat.IntentBuilder.from(this).setChooserTitle("Sharing is caring")
+                .setText(shareText)
+                .setType("text/plain").startChooser();
     }
 
     /**
