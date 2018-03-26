@@ -3,6 +3,7 @@ package com.example.android.waitlist;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import com.example.android.waitlist.data.WaitlistContract;
 
 public class GuestListAdapter extends RecyclerView.Adapter<GuestListAdapter.GuestViewHolder> {
 
+    private static final String TAG = "GuestListAdapter";
     // Holds on to the cursor to display the waitlist
     private Cursor mCursor;
     private Context mContext;
@@ -44,13 +46,16 @@ public class GuestListAdapter extends RecyclerView.Adapter<GuestListAdapter.Gues
         // Update the view holder with the information needed to display
         String name = mCursor.getString(mCursor.getColumnIndex(WaitlistContract.WaitlistEntry.COLUMN_GUEST_NAME));
         int partySize = mCursor.getInt(mCursor.getColumnIndex(WaitlistContract.WaitlistEntry.COLUMN_PARTY_SIZE));
-        // TODO (6) Retrieve the id from the cursor and
+        // COMPLETED (6) Retrieve the id from the cursor and
 
+        long id = mCursor.getLong(mCursor.getColumnIndex(WaitlistContract.WaitlistEntry._ID));
+        Log.d(TAG, "onBindViewHolder: id "+ id);
         // Display the guest name
         holder.nameTextView.setText(name);
         // Display the party count
         holder.partySizeTextView.setText(String.valueOf(partySize));
-        // TODO (7) Set the tag of the itemview in the holder to the id
+        holder.itemView.setTag(id);
+        // COMPLETED (7) Set the tag of the itemview in the holder to the id
     }
 
 
